@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 
 
@@ -36,6 +37,8 @@ void print_row(char *label, char *value, int width, int col)
 
 void print_entry(struct dirent *entry, struct stat s)
 {
+  #define time_size 20
+  static const char *time_fmt = "%F %T";
   static const char thick = '=';
   static const char thin = '-';
   static const int width = 72;
@@ -62,13 +65,13 @@ void print_entry(struct dirent *entry, struct stat s)
   }
   print_row("Type", type, width, col);
   print_border(thin, width, col);
-  char time[64];
-  sprintf(time, "%ld", s.st_mtimespec.tv_sec);
-  print_row("Modified", time, width, col);
+  char mtime[time_size];
+  strftime(mtime, time_size, time_fmt, localtime(&s.st_mtimespec.tv_sec));
+  print_row("Modified", mtime, width, col);
   print_border(thin, width, col);
-  char accessed[64];
-  sprintf(accessed, "%ld", s.st_atimespec.tv_sec);
-  print_row("Accessed", accessed, width, col);
+  char atime[time_size];
+  strftime(atime, time_size, time_fmt, localtime(&s.st_atimespec.tv_sec));
+  print_row("Accessed", atime, width, col);
   print_border(thick, width, 0);
 }
   
