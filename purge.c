@@ -36,10 +36,10 @@ void print_row(char *label, char *value, int width, int col)
 
 void print_entry(struct dirent *entry, struct stat s)
 {
-  static char thick = '=';
-  static char thin = '-';
-  static int width = 72;
-  static int col = 12;
+  static const char thick = '=';
+  static const char thin = '-';
+  static const int width = 72;
+  static const int col = 12;
 
   print_border(thick, width, 0);
   print_row(entry->d_name, NULL, width, 0);
