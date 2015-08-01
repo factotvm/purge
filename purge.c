@@ -1,8 +1,12 @@
 #include "purge.h"
 #include <stdio.h>
 #include <dirent.h>
+#include <stdbool.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <termios.h>
+#include <unistd.h>
+
 
 void print_border(char stroke, int width, int col)
 {
@@ -68,6 +72,23 @@ void print_entry(struct dirent *entry, struct stat s)
   print_border(thick, width, 0);
 }
   
+bool delete_confirmed()
+{
+  char c;
+  struct termios oldt, newt;
+
+  tcgetattr(STDIN_FILENO, &oldt);
+  newt = oldt;
+  newt.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+  printf("Would you like to delete this file? [Y/n]\n");
+  c = getchar();
+
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+  return !('N' == c || 'n' == c);
+}
 
 int purge(char *path) 
 {
@@ -93,10 +114,7 @@ int purge(char *path)
       }
       else {
 	print_entry(entry, s);
-	printf("Delete %s? [Y/n]\n", entry->d_name);
-	char c;
-	c = getchar();
-	if (!('N' == c || 'n' == c)) {
+	if (delete_confirmed()) {
 	  int result = remove(file);
 	  if (result != 0) 
 	    printf("Could not remove file '%s'\n", file);
