@@ -45,7 +45,17 @@ void print_entry(struct dirent *entry, struct stat s)
   print_row("Size", size, width, col);
   print_border(thin, width, col);
   char *type;
-  type = (entry->d_type == DT_REG) ? "Regular file" : "Symbolic link";
+  switch (entry->d_type) {
+    case DT_REG:
+      type = "Regular file";
+      break;
+    case DT_LNK:
+      type = "Symbolic link";
+      break;
+    default:
+      type = "Unrecognized";
+      break;
+  }
   print_row("Type", type, width, col);
   print_border(thin, width, col);
   char time[64];
