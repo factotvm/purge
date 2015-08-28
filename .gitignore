@@ -31,5 +31,6 @@
 # Debug files
 *.dSYM/
 
-# Executable
+# Executables
 purge
+purge_tests

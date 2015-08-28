@@ -1,17 +1,25 @@
 CC = gcc
-CFLAGS = -g -Wall -Wextra -Wpedantic -O0
+CFLAGS = -g -Wall -Wextra -Wpedantic -O0 `pkg-config --cflags cmocka`
+LIBS = `pkg-config --libs cmocka`
 target := purge
-objects := main.o purge.o
+objects := format.o purge.o
+test_target := purge_tests
+test_objects := $(patsubst %.c,%.o,$(wildcard tests/*.c))
+
+default: clean test
 
 $(target): $(objects)
-	$(CC) $(CFLAGS) $(objects) -o $@
+	$(CC) main.o $(objects) -o $@
 
-test:
+$(test_target): $(objects) $(test_objects)
+	$(CC) $(LIBS) -o $(test_target) $(objects) $(test_objects)
+
+test: $(test_target)
 	@scripts/fixtures.sh -c
-	@echo "No tests run"
+	@./$(test_target)
 	@scripts/fixtures.sh -d
 .PHONY: test
 
 clean:
-	rm -rf *.o $(target) $(target).dSYM
+	rm -rf $(objects) $(test_objects) $(target) $(target).dSYM $(test_target)
 .PHONY: clean
