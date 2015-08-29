@@ -6,12 +6,14 @@ objects := format.o purge.o
 test_target := purge_tests
 test_objects := $(patsubst %.c,%.o,$(wildcard tests/*.c))
 
-default: clean test
+default: clean test $(target)
 
 $(target): $(objects)
+	@echo "Compiling $(target)..."
 	$(CC) main.o $(objects) -o $@
 
 $(test_target): $(objects) $(test_objects)
+	@echo "Compiling $(test_target)..."
 	$(CC) $(LIBS) -o $(test_target) $(objects) $(test_objects)
 
 test: $(test_target)
