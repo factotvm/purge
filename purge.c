@@ -1,4 +1,5 @@
 #include "purge.h"
+#include "format.h"
 #include <stdio.h>
 #include <dirent.h>
 #include <stdbool.h>
@@ -37,7 +38,7 @@ void print_row(char *label, char *value, int width, int col)
 
 void print_entry(struct dirent *entry, struct stat s)
 {
-  #define time_size 20
+  #define value_len 20
   static const char *time_fmt = "%F %T";
   static const char thick = '=';
   static const char thin = '-';
@@ -47,8 +48,8 @@ void print_entry(struct dirent *entry, struct stat s)
   print_border(thick, width, 0);
   print_row(entry->d_name, NULL, width, 0);
   print_border(thick, width, col);
-  char size[32];
-  sprintf(size, "%lld", s.st_size);
+  char size[value_len];
+  format_bytes(size, value_len, s.st_size);
   print_row("Size", size, width, col);
   print_border(thin, width, col);
   char *type;
@@ -65,12 +66,12 @@ void print_entry(struct dirent *entry, struct stat s)
   }
   print_row("Type", type, width, col);
   print_border(thin, width, col);
-  char mtime[time_size];
-  strftime(mtime, time_size, time_fmt, localtime(&s.st_mtimespec.tv_sec));
+  char mtime[value_len];
+  strftime(mtime, value_len, time_fmt, localtime(&s.st_mtimespec.tv_sec));
   print_row("Modified", mtime, width, col);
   print_border(thin, width, col);
-  char atime[time_size];
-  strftime(atime, time_size, time_fmt, localtime(&s.st_atimespec.tv_sec));
+  char atime[value_len];
+  strftime(atime, value_len, time_fmt, localtime(&s.st_atimespec.tv_sec));
   print_row("Accessed", atime, width, col);
   print_border(thick, width, 0);
 }
