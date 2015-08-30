@@ -25,13 +25,12 @@ create() {
 if [[ $1 == '-c' || $1 == '--create' ]]
 then
   create
-elif [[ $1 == '-d' || $1 == '--destroy' ]] 
+elif [[ $1 == '-d' || $1 == '--destroy' ]]
 then
   destroy
 else
   echo 'No task specified:'
   echo '  -c, --create       Generate fixtures for testing'
   echo '  -d, --destroy      Delete fixtures from disk'
-fi  
-
+fi
 
