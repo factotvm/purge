@@ -10,7 +10,7 @@ default: clean test $(target)
 
 $(target): $(objects)
 	@echo "Compiling $(target)..."
-	$(CC) main.o $(objects) -o $@
+	$(CC) main.c $(objects) -o $@
 
 $(test_target): $(objects) $(test_objects)
 	@echo "Compiling $(test_target)..."
